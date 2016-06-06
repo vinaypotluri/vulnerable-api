@@ -21,6 +21,29 @@ import xml.etree.ElementTree as ET
 from lxml import etree
 from bottle import route, run, request, debug
 
+@route('/time', method="POST")
+def check_time():
+
+    data = request.body.read()
+    val = json.loads(data)
+
+    if 'epoch' not in val:
+        response = {'Error':'Pass timestamp with variable \'epoch\' '}
+    else:
+        epoch = float(val['epoch'])
+        print epoch
+        struct_time = time.localtime(epoch)
+        response = {'Epoch to structured time':
+                    {
+                      'Year': struct_time.tm_year,
+                      'Month': struct_time.tm_mon,
+                      'Day' : struct_time.tm_mday,
+                      'Hour' : struct_time.tm_hour,
+                      'Minute' : struct_time.tm_min,
+                      'second' : struct_time.tm_sec
+                     }
+                     }
+    return json.dumps(response, sort_keys=True, indent=2)
 
 @route('/', method='GET')
 def get_root():
